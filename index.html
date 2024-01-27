@@ -22,6 +22,7 @@
     </style>
 </head>
 <body>
+    // adjust path here accordingly
     <img id="currentImage" src="file:///E:/git_projx/stable-diffusion-webui/outputs/currimg.png" alt="Current Image">
 
     <script>
@@ -30,7 +31,7 @@
             imgElement.src = imgElement.src + "?" + new Date().getTime(); // Add timestamp to force refresh
         }
 
-        // Refresh the image every 5 seconds (adjust as needed)
+        // Refresh the image every 1 second (adjust as needed)
         setInterval(refreshImage, 1000);
     </script>
 </body>
