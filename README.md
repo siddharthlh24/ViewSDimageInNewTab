@@ -1,7 +1,7 @@
 # ViewSDimageInNewTab
  This guide shows you how to view sd images in a new tab and refresh automagically ( automatic1111 )
 
-[Video Demo and Instructions](https://www.youtube.com/siddharthlh) : If you came here from the video, that's great !
+[Video Demo and Instructions](https://www.youtube.com/watch?v=NSsbxw7jB3Q) : If you came here from the video, that's great !
 
 * Edit stable-diffusion-webui\modules\images.py as below <br>
 ```
