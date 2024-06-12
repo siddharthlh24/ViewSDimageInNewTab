@@ -1,38 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title>Image Display</title>
+    <title>Image Viewer</title>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden; /* Remove any default margin and scrolling */
-        }
+      body {
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        overflow: hidden;
+        background-color: black;
+      }
 
-        h1 {
-            text-align: center;
-        }
+      #imageContainer {
+        position: relative;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        cursor: grab;
+      }
 
-        img {
-            max-width: 100%;
-            max-height: 100%;
-            display: block;
-            margin: auto;
-        }
+      #imageContainer:active {
+        cursor: grabbing;
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        object-fit: contain;
+        border: none;
+        user-select: none;
+        pointer-events: none;
+      }
     </style>
-</head>
-<body>
-    // adjust path here accordingly
-    <img id="currentImage" src="file:///E:/git_projx/stable-diffusion-webui/outputs/currimg.png" alt="Current Image">
-
+  </head>
+  <body>
+    <div id="imageContainer">
+      <img id="currentImage" src="file:///E:/git_projx/stable-diffusion-webui/outputs/currimg.png" alt="Current Image">// adjust path here accordingly
+    </div>
     <script>
-        function refreshImage() {
-            var imgElement = document.getElementById('currentImage');
-            imgElement.src = imgElement.src + "?" + new Date().getTime(); // Add timestamp to force refresh
+      var imgElement = document.getElementById('currentImage');
+      var zoomLevel = 1.0;
+      var zoomIncrement = 0.25;
+      var isDragging = false;
+      var startX, startY;
+      var startTranslateX = 0,
+        startTranslateY = 0;
+      centerImage();
+      document.getElementById('imageContainer').addEventListener('wheel', function(event) {
+        if (event.deltaY < 0) {
+          zoomIn();
+        } else {
+          zoomOut();
         }
+        event.preventDefault();
+      });
+      document.getElementById('imageContainer').addEventListener('mousedown', function(event) {
+        if (event.button === 0) {
+          isDragging = true;
+          startX = event.clientX;
+          startY = event.clientY;
+          var transform = imgElement.style.transform.match(/translate\((.*)px, (.*)px\)/);
+          startTranslateX = transform ? parseFloat(transform[1]) : 0;
+          startTranslateY = transform ? parseFloat(transform[2]) : 0;
+          event.preventDefault();
+        }
+      });
+      document.addEventListener('mousemove', function(event) {
+        if (isDragging) {
+          var deltaX = event.clientX - startX;
+          var deltaY = event.clientY - startY;
+          var newTranslateX = startTranslateX + deltaX;
+          var newTranslateY = startTranslateY + deltaY;
+          imgElement.style.transform = 'scale(' + zoomLevel + ') translate(' + newTranslateX + 'px, ' + newTranslateY + 'px)';
+          event.preventDefault();
+        }
+      });
+      document.addEventListener('mouseup', function(event) {
+        isDragging = false;
+      });
 
-        // Refresh the image every 1 second (adjust as needed)
-        setInterval(refreshImage, 1000);
+      function zoomIn() {
+        zoomLevel += zoomIncrement;
+        updateZoom();
+      }
+
+      function zoomOut() {
+        if (zoomLevel > 1.0) {
+          zoomLevel -= zoomIncrement;
+          updateZoom();
+        }
+      }
+
+      function updateZoom() {
+        var containerWidth = document.getElementById('imageContainer').offsetWidth;
+        var containerHeight = document.getElementById('imageContainer').offsetHeight;
+        var imageWidth = imgElement.offsetWidth * zoomLevel;
+        var imageHeight = imgElement.offsetHeight * zoomLevel;
+        var currentTransform = imgElement.style.transform.match(/translate\((.*)px, (.*)px\)/);
+        var currentTranslateX = currentTransform ? parseFloat(currentTransform[1]) : 0;
+        var currentTranslateY = currentTransform ? parseFloat(currentTransform[2]) : 0;
+        var newTranslateX = currentTranslateX;
+        var newTranslateY = currentTranslateY;
+        imgElement.style.transform = 'scale(' + zoomLevel + ') translate(' + newTranslateX + 'px, ' + newTranslateY + 'px)';
+        if (zoomLevel > 1.0 && imageWidth < containerWidth && imageHeight < containerHeight) {
+          centerImage();
+        } else if (zoomLevel === 1.0) {
+          centerImage();
+        }
+      }
+
+      function centerImage() {
+        var containerWidth = document.getElementById('imageContainer').offsetWidth;
+        var containerHeight = document.getElementById('imageContainer').offsetHeight;
+        var imageWidth = imgElement.offsetWidth;
+        var imageHeight = imgElement.offsetHeight;
+        var translateX = (containerWidth - imageWidth) / 2;
+        var translateY = (containerHeight - imageHeight) / 2;
+        imgElement.style.transform = 'scale(' + zoomLevel + ') translate(' + translateX + 'px, ' + translateY + 'px)';
+      }
     </script>
-</body>
+  </body>
 </html>
