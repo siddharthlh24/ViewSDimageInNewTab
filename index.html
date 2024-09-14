@@ -2,36 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Display</title>
     <style>
         body {
             margin: 0;
-            overflow: hidden; /* Remove any default margin and scrolling */
-        }
-
-        h1 {
-            text-align: center;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000; /* Optional: black background */
         }
 
         img {
             max-width: 100%;
             max-height: 100%;
+            width: auto;
+            height: auto;
             display: block;
-            margin: auto;
         }
     </style>
 </head>
 <body>
-    // adjust path here accordingly
     <img id="currentImage" src="file:///E:/git_projx/stable-diffusion-webui/outputs/currimg.png" alt="Current Image">
 
     <script>
         function refreshImage() {
             var imgElement = document.getElementById('currentImage');
-            imgElement.src = imgElement.src + "?" + new Date().getTime(); // Add timestamp to force refresh
+            imgElement.src = imgElement.src.split("?")[0] + "?" + new Date().getTime(); // Force refresh by appending a timestamp
         }
 
-        // Refresh the image every 1 second (adjust as needed)
+        // Refresh the image every second
         setInterval(refreshImage, 1000);
     </script>
 </body>
